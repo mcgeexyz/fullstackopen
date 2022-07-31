@@ -1,0 +1,55 @@
+title Traditional Web Application
+
+note over browser:
+user enters a new note in the form
+input and clicks the 'submit' button
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/notes/new_note
+
+note over server
+server processes the request
+creating a new note using the
+data from the request body
+end note
+
+note over server
+server creates a new note object
+and responds with a URL redirect
+end note
+
+server-->browser: 302 FOUND text/HTML (URL Redirect)
+
+note over browser
+browser make a new GET request as
+requested by the redirect response
+end note 
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server-->browser: 200 OK Document notes.html
+
+note over browser
+browser starts loading the page
+making further GET requests
+to the server for assets required
+by the page load
+end note 
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: 200 OK Stylesheet main.css
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server-->browser: 200 OK Script main.js
+
+note over browser:
+browser starts executing js-code
+that requests JSON data from server 
+end note
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server-->browser: 200 OK XHR [{ content: "HTML is easy", date: "2019-05-23" }, ...]
+
+note over browser:
+browser executes the event handler
+that renders notes to display
+end note
