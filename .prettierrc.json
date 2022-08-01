@@ -5,5 +5,11 @@
   "singleQuote": true,
   "bracketSpacing": true,
   "arrowParens": "always",
-  "singleAttributePerLine": false
+  "singleAttributePerLine": false,
+  "useTabs": false,
+  "bracketSameLine": false,
+  "endOfLine": "lf",
+  "jsxSingleQuote": false,
+  "printWidth": 80,
+  "quoteProps": "as-needed"
 }
