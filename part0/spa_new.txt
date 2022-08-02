@@ -1,0 +1,28 @@
+note over browser:
+user enters a new note in the form
+input and clicks the 'submit' button
+end note
+
+note over browser:
+browser executes the event handler
+that renders notes to display
+end note
+
+note over browser:
+browser sends the new note to server as JSON
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+
+note over server
+server processes the request
+creating a new note using the
+data from the request body
+end note
+
+note over server
+server creates a new note object
+and responds with a 201 Created
+end note
+
+server-->browser: 201 CREATED text/HTML
