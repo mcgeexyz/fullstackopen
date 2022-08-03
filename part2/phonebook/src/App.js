@@ -1,5 +1,9 @@
 import { useState } from 'react';
 
+import PersonForm from './components/PersonForm';
+import Filter from './components/Filter';
+import Persons from './components/Persons';
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456', id: 1 },
@@ -9,7 +13,7 @@ const App = () => {
   ]);
 
   const newPersonInitialState = {
-    id: persons.length + 1,
+    id: '',
     name: '',
     number: '',
   };
@@ -35,54 +39,34 @@ const App = () => {
     if (persons.map((person) => person.name).includes(newPerson.name)) {
       alert(`${newPerson.name} is already added to the phone book`);
     } else {
-      setPersons([...persons, newPerson]);
+      setPersons([
+        ...persons,
+        {
+          ...newPerson,
+          id: persons.length + 1,
+        },
+      ]);
       setNewPerson(newPersonInitialState);
     }
   };
 
-  const personsToShow = persons.filter((person) => {
-    return person.name.toLowerCase().includes(filter.toLowerCase());
-  });
-
   return (
     <div>
       <h1>Phone Book</h1>
-      <h2>Add New</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          name:{' '}
-          <input
-            name="name"
-            value={newPerson.name}
-            onChange={handleFormChange}
-          />
-        </div>
-        <div>
-          number:{' '}
-          <input
-            name="number"
-            value={newPerson.number}
-            onChange={handleFormChange}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm
+        newPerson={newPerson}
+        handleFormChange={handleFormChange}
+        handleSubmit={handleSubmit}
+      />
       <h2>Numbers</h2>
-      <div>
-        filter:{' '}
-        <input
-          name="filter"
-          value={filter}
-          onChange={handleFilterChange}
-        />
-      </div>
-      {personsToShow.map(({ id, name, number }) => (
-        <p key={id}>
-          {id}. {name}: {number}
-        </p>
-      ))}
+      <Filter
+        filter={filter}
+        handleFilterChange={handleFilterChange}
+      />
+      <Persons
+        persons={persons}
+        filter={filter}
+      />
     </div>
   );
 };
