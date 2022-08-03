@@ -1,40 +1,60 @@
 import { useState } from 'react';
 
 const App = () => {
-  const [persons, setPersons] = useState([{ name: 'Arto Hellas' }]);
-  const [newName, setNewName] = useState('');
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas', phoneNumber: '555-1234-5678' },
+  ]);
 
-  const handleInputChange = (event) => {
-    setNewName(event.target.value);
+  const newPersonDefaultState = { name: '', phoneNumber: '' };
+  const [newPerson, setNewPerson] = useState(newPersonDefaultState);
+
+  const handleInputChange = ({ target: { name, value } }) => {
+    setNewPerson({
+      ...newPerson,
+      [name]: value,
+    });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (persons.map((person) => person.name).includes(newName)) {
-      alert(`${newName} is already added to the phone book`);
+    if (persons.map((person) => person.name).includes(newPerson.name)) {
+      alert(`${newPerson.name} is already added to the phone book`);
     } else {
-      setPersons([...persons, { name: newName }]);
-      setNewName('');
+      setPersons([...persons, newPerson]);
+      setNewPerson(newPersonDefaultState);
     }
   };
-
-  console.log(persons);
 
   return (
     <div>
       <h2>Phone Book</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          name: <input value={newName} onChange={handleInputChange} />
+          name:{' '}
+          <input
+            name="name"
+            value={newPerson.name}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          number:{' '}
+          <input
+            name="phoneNumber"
+            value={newPerson.phoneNumber}
+            onChange={handleInputChange}
+          />
         </div>
         <div>
           <button type="submit">add</button>
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map(({ name }) => (
-        <p key={name}>{name}</p>
+      {persons.map(({ name, phoneNumber }) => (
+        <p key={name}>
+          {name}: {phoneNumber}
+        </p>
       ))}
     </div>
   );
