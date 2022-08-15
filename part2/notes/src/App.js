@@ -1,10 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import Note from './components/Note';
 
-const App = (props) => {
-  const [notes, setNotes] = useState(props.notes);
+const App = () => {
+  const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('');
   const [showAll, setShowAll] = useState(true);
+
+  // The following 'effect' is executed immediately after rendering
+  useEffect(() => {
+    console.log('effect run!');
+
+    axios.get('http://localhost:3001/notes').then((response) => {
+      console.log('promise fulfilled');
+      // triggers a render
+      setNotes(response.data);
+    });
+  }, []); // only fire the effect once
+
+  console.log('render', notes.length, 'notes');
+
+  // Effect Hooks
+  // Use effect hook and axios to get data from server
+  // Effect hooks allow you to perform sid effects on function
+  // components. Data fetching, setting up a subscription and
+  // manually manipulating the DOM in react components are all
+  // examples of side effects.
 
   const addNote = (event) => {
     event.preventDefault();
