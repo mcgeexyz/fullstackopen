@@ -1,9 +1,25 @@
+import { useState } from 'react';
+
 const Country = ({ country, showDetails }) => {
+  const [show, setShow] = useState(showDetails);
+
   const { name, capital, area, languages } = country;
 
-  return showDetails ? (
-    <div>
-      <h2>{name.common}</h2>
+  const handleToggleDetails = () => {
+    setShow((prevState) => !prevState);
+  };
+
+  return show ? (
+    <li>
+      <div>
+        <button
+          style={{ width: 50, marginRight: 4 }}
+          onClick={handleToggleDetails}
+        >
+          Hide
+        </button>
+        {name.common}
+      </div>
       <p>Capital City: {capital}</p>
       <p>Area: {area} km2</p>
       <p>Languages Spoken:</p>
@@ -16,9 +32,17 @@ const Country = ({ country, showDetails }) => {
         src={country.flags.png}
         alt={`${name.common} flag`}
       />
-    </div>
+    </li>
   ) : (
-    <li>{name.common}</li>
+    <li>
+      <button
+        style={{ width: 50 }}
+        onClick={handleToggleDetails}
+      >
+        Show
+      </button>{' '}
+      {name.common}
+    </li>
   );
 };
 
@@ -36,7 +60,7 @@ const Countries = ({ countries, searchTerm }) => {
       return (
         <Country
           country={filteredCountries[0]}
-          showDetails={true}
+          show={true}
         />
       );
     }
@@ -51,7 +75,7 @@ const Countries = ({ countries, searchTerm }) => {
           <Country
             key={country.cca2}
             country={country}
-            showDetails={false}
+            show={false}
           />
         ))}
       </ol>
