@@ -1,39 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
-const Country = ({ country, showDetails }) => {
-  const [show, setShow] = useState(showDetails);
-
-  const { name, capital, area, languages } = country;
-
-  const handleToggleDetails = () => {
-    setShow((prevState) => !prevState);
-  };
-
-  return show ? (
-    <li>
-      <div>
-        <button
-          style={{ width: 50, marginRight: 4 }}
-          onClick={handleToggleDetails}
-        >
-          Hide
-        </button>
-        {name.common}
-      </div>
-      <p>Capital City: {capital}</p>
-      <p>Area: {area} km2</p>
-      <p>Languages Spoken:</p>
-      <ul>
-        {Object.entries(languages).map(([code, lang]) => {
-          return <li key={code}>{lang}</li>;
-        })}
-      </ul>
-      <img
-        src={country.flags.png}
-        alt={`${name.common} flag`}
-      />
-    </li>
-  ) : (
+const CountryListItem = ({ country, handleToggleDetails }) => {
+  return (
     <li>
       <button
         style={{ width: 50 }}
@@ -41,8 +10,81 @@ const Country = ({ country, showDetails }) => {
       >
         Show
       </button>{' '}
-      {name.common}
+      {country.name.common}
     </li>
+  );
+};
+
+const CountryDetailed = ({ country, handleToggleDetails }) => {
+  const { name, capital, area, languages, flags } = country;
+
+  const API_BASE_URL = 'https://api.weatherapi.com/v1/current.json';
+  const API_KEY = process.env.REACT_APP_API_KEY;
+  const API_URL = `${API_BASE_URL}?key=${API_KEY}&q=${capital}&aqi=no`;
+
+  const [weather, setWeather] = useState('');
+
+  useEffect(() => {
+    axios.get(API_URL).then((response) => {
+      setWeather(response.data);
+    });
+  }, [API_URL]);
+
+  return (
+    <li>
+      <button
+        style={{ width: 50 }}
+        onClick={handleToggleDetails}
+      >
+        Hide
+      </button>
+      <h2>{name.common}</h2>
+      <p>Capital City: {capital}</p>
+      <p>Area: {area} km2</p>
+      <h4>Languages Spoken:</h4>
+      <ul>
+        {Object.entries(languages).map(([code, lang]) => {
+          return <li key={code}>{lang}</li>;
+        })}
+      </ul>
+      <img
+        src={flags.png}
+        alt={`${name.common} flag`}
+      />
+      <h3>Weather in {capital}</h3>
+      {weather ? (
+        <div>
+          <p>Temperature: {weather.current.temp_c} Celcius</p>
+          <img
+            src={weather.current.condition.icon}
+            alt={weather.current.condition.text}
+          />
+          <p>Wind: {weather.current.wind_kph} kph</p>
+        </div>
+      ) : (
+        <p>Loading Weather...</p>
+      )}
+    </li>
+  );
+};
+
+const Country = ({ country, showDetails }) => {
+  const [show, setShow] = useState(showDetails);
+
+  const handleToggleDetails = () => {
+    setShow((prevState) => !prevState);
+  };
+
+  return show ? (
+    <CountryDetailed
+      country={country}
+      handleToggleDetails={handleToggleDetails}
+    />
+  ) : (
+    <CountryListItem
+      country={country}
+      handleToggleDetails={handleToggleDetails}
+    />
   );
 };
 
@@ -60,7 +102,7 @@ const Countries = ({ countries, searchTerm }) => {
       return (
         <Country
           country={filteredCountries[0]}
-          show={true}
+          showDetails={true}
         />
       );
     }
@@ -75,7 +117,7 @@ const Countries = ({ countries, searchTerm }) => {
           <Country
             key={country.cca2}
             country={country}
-            show={false}
+            showDetails={false}
           />
         ))}
       </ol>
