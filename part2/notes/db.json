@@ -33,7 +33,7 @@
     {
       "content": "note 222",
       "date": "2022-08-16T13:28:01.913Z",
-      "important": false,
+      "important": true,
       "id": 6
     }
   ]
