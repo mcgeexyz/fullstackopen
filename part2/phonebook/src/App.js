@@ -6,8 +6,9 @@ import Filter from './components/Filter';
 import Persons from './components/Persons';
 
 const App = () => {
-  const [persons, setPersons] = useState([]);
+  const BASE_URL = 'http://localhost:3001/persons';
 
+  const [persons, setPersons] = useState([]);
   const newPersonInitialState = {
     id: '',
     name: '',
@@ -17,8 +18,7 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    console.log('effect run');
-    axios.get('http://localhost:3001/persons').then((response) => {
+    axios.get(BASE_URL).then((response) => {
       setPersons(response.data);
     });
   }, []);
@@ -42,13 +42,15 @@ const App = () => {
     if (persons.map((person) => person.name).includes(newPerson.name)) {
       alert(`${newPerson.name} is already added to the phone book`);
     } else {
-      setPersons([
-        ...persons,
-        {
-          ...newPerson,
-          id: persons.length + 1,
-        },
-      ]);
+      axios
+        .post(BASE_URL, newPerson)
+        .then((res) => {
+          setPersons((prevState) => [...prevState, res.data]);
+        })
+        .catch((err) => {
+          alert('There was a problem adding the new phone number...');
+        });
+
       setNewPerson(newPersonInitialState);
     }
   };
