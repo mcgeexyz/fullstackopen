@@ -2,14 +2,7 @@ import axios from 'axios';
 const baseUrl = 'http://localhost:3001/notes';
 
 const getAll = () => {
-  const req = axios.get(baseUrl);
-  const nonExisting = {
-    id: 99999,
-    content: 'This not is not saved to the server',
-    date: '2019-05-30T17:30:31.098Z',
-    important: true,
-  };
-  return req.then((res) => [...res.data, nonExisting]);
+  return axios.get(baseUrl).then((res) => res.data);
 };
 
 const create = (newObject) => {

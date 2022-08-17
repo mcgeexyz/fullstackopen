@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import personsService from './services/persons';
 
 import PersonForm from './components/PersonForm';
 import Filter from './components/Filter';
 import Persons from './components/Persons';
 
 const App = () => {
-  const BASE_URL = 'http://localhost:3001/persons';
-
   const [persons, setPersons] = useState([]);
   const newPersonInitialState = {
     id: '',
@@ -18,8 +16,8 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    axios.get(BASE_URL).then((response) => {
-      setPersons(response.data);
+    personsService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
     });
   }, []);
 
@@ -42,10 +40,10 @@ const App = () => {
     if (persons.map((person) => person.name).includes(newPerson.name)) {
       alert(`${newPerson.name} is already added to the phone book`);
     } else {
-      axios
-        .post(BASE_URL, newPerson)
-        .then((res) => {
-          setPersons((prevState) => [...prevState, res.data]);
+      personsService
+        .create(newPerson)
+        .then((returnedPerson) => {
+          setPersons((prevState) => [...prevState, returnedPerson]);
         })
         .catch((err) => {
           alert('There was a problem adding the new phone number...');
