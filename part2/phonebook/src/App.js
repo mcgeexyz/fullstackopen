@@ -37,8 +37,32 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (persons.map((person) => person.name).includes(newPerson.name)) {
-      alert(`${newPerson.name} is already added to the phone book`);
+    // Need to know if the person alreadt exists
+    // If yes, what is their id?
+
+    const alreadyExists = persons.find(
+      (person) => person.name === newPerson.name
+    );
+
+    if (alreadyExists) {
+      const confirmUpdate = window.confirm(
+        `${newPerson.name} is already added to the phone book, replace the old number with the new one?`
+      );
+
+      if (confirmUpdate) {
+        personsService
+          .update(alreadyExists.id, newPerson)
+          .then((returnedPerson) => {
+            setPersons((prevState) => {
+              return prevState.map((person) => {
+                return person.id === alreadyExists.id ? returnedPerson : person;
+              });
+            });
+          })
+          .catch((err) => {
+            alert('There was a problem updating the phone number...');
+          });
+      }
     } else {
       personsService
         .create(newPerson)
@@ -60,7 +84,7 @@ const App = () => {
     );
 
     if (deleteConfirmed) {
-      personsService.del(id).then((res) => {
+      personsService.del(id).then(() => {
         setPersons((prevState) => {
           return prevState.filter((person) => person.id !== id);
         }).catch((err) => {
