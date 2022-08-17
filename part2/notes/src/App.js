@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import noteService from './services/notes';
 import Note from './components/Note';
 
 const App = () => {
@@ -7,25 +7,11 @@ const App = () => {
   const [newNote, setNewNote] = useState('');
   const [showAll, setShowAll] = useState(true);
 
-  // The following 'effect' is executed immediately after rendering
   useEffect(() => {
-    console.log('effect run!');
-
-    axios.get('http://localhost:3001/notes').then((response) => {
-      console.log('promise fulfilled');
-      // triggers a render
-      setNotes(response.data);
+    noteService.getAll().then((initialNotes) => {
+      setNotes(initialNotes);
     });
-  }, []); // only fire the effect once
-
-  console.log('render', notes.length, 'notes');
-
-  // Effect Hooks
-  // Use effect hook and axios to get data from server
-  // Effect hooks allow you to perform sid effects on function
-  // components. Data fetching, setting up a subscription and
-  // manually manipulating the DOM in react components are all
-  // examples of side effects.
+  }, []);
 
   const addNote = (event) => {
     event.preventDefault();
@@ -36,12 +22,32 @@ const App = () => {
       id: notes.length + 1,
     };
 
-    setNotes((prevState) => [...prevState, noteObject]);
-    setNewNote('');
+    noteService.create(noteObject).then((returnedNote) => {
+      setNotes((prevState) => [...prevState, returnedNote]);
+      setNewNote('');
+    });
   };
 
   const handleNoteChange = (event) => {
     setNewNote(event.target.value);
+  };
+
+  const toggleImportanceOf = (id) => {
+    const note = notes.find((note) => note.id === id);
+    const changedNote = { ...note, important: !note.important };
+
+    noteService
+      .update(id, changedNote)
+      .then((returnedNote) => {
+        setNotes(notes.map((note) => (note.id !== id ? note : returnedNote)));
+      })
+      .catch((err) => {
+        alert(
+          `the note "${note.content}" has already been deleted from the server.`
+        );
+        // remove the server deleted note from local state
+        setNotes(notes.filter((note) => note.id !== id));
+      });
   };
 
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
@@ -59,6 +65,7 @@ const App = () => {
           <Note
             key={note.id}
             note={note}
+            toggleImportance={() => toggleImportanceOf(note.id)}
           />
         ))}
       </ul>
