@@ -53,6 +53,23 @@ const App = () => {
     }
   };
 
+  const handleDelete = (id) => {
+    const personToDelete = persons.find((person) => person.id === id);
+    const deleteConfirmed = window.confirm(
+      `Are you sure you want to delete ${personToDelete.name}?`
+    );
+
+    if (deleteConfirmed) {
+      personsService.del(id).then((res) => {
+        setPersons((prevState) => {
+          return prevState.filter((person) => person.id !== id);
+        }).catch((err) => {
+          alert(`Error deleting ${personToDelete.name}...`, err);
+        });
+      });
+    }
+  };
+
   return (
     <div>
       <h1>Phone Book</h1>
@@ -69,6 +86,7 @@ const App = () => {
       <Persons
         persons={persons}
         filter={filter}
+        handleDelete={handleDelete}
       />
     </div>
   );

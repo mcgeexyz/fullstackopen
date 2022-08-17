@@ -1,10 +1,11 @@
-const Person = ({ person: { name, number, id } }) => (
+const Person = ({ person: { name, number, id }, handleDelete }) => (
   <li>
     {id}. {name}: {number}
+    <button onClick={handleDelete}>Delete</button>
   </li>
 );
 
-const Persons = ({ persons, filter }) => {
+const Persons = ({ persons, filter, handleDelete }) => {
   const personsToShow = persons
     .filter((person) =>
       person.name.toLowerCase().includes(filter.toLowerCase())
@@ -13,6 +14,7 @@ const Persons = ({ persons, filter }) => {
       <Person
         key={person.id}
         person={person}
+        handleDelete={() => handleDelete(person.id)}
       />
     ));
 
