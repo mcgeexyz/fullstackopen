@@ -96,11 +96,16 @@ const App = () => {
       personsService
         .del(id)
         .then(() => {
-          setPersons(persons.filter((person) => person.id !== id));
-          notify(`Deleted ${personToDelete.name}.`, 'error');
+          notify(`Deleted ${personToDelete.name}.`, 'success');
         })
         .catch((err) => {
-          alert(`Error deleting ${personToDelete.name}...`, err);
+          notify(
+            `${personToDelete.name} has already been removed from the server`,
+            'error'
+          );
+        })
+        .then(() => {
+          setPersons(persons.filter((person) => person.id !== id));
         });
     }
   };
