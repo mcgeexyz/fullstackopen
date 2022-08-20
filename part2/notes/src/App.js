@@ -24,10 +24,7 @@ const App = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('');
   const [showAll, setShowAll] = useState(true);
-  const [notification, setNotification] = useState({
-    message: null,
-    type: 'error',
-  });
+  const [notification, setNotification] = useState({ message: '' });
 
   useEffect(() => {
     noteService.getAll().then((initialNotes) => {
@@ -37,7 +34,7 @@ const App = () => {
 
   const notify = (message, type) => {
     setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
+    setTimeout(() => setNotification({ message: '' }), 5000);
   };
 
   const addNote = (event) => {
@@ -79,10 +76,7 @@ const App = () => {
   return (
     <div>
       <h1>Notes</h1>
-      <Notification
-        message={notification.message}
-        type={notification.type}
-      />
+      <Notification notification={notification} />
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all'}
