@@ -69,6 +69,7 @@ const App = () => {
           })
           .catch((error) => {
             console.log(error.response.data.error);
+            notify(error.response.data.error, 'error');
           });
       }
     } else {
@@ -80,6 +81,7 @@ const App = () => {
         })
         .catch((error) => {
           console.log(error.response.data.error);
+          notify(error.response.data.error, 'error');
         });
 
       setNewPerson(newPersonInitialState);
