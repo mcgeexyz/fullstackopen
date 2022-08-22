@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import personsService from './services/persons';
+import { useEffect, useState } from 'react';
 import './index.css';
+import personsService from './services/persons';
 
-import PersonForm from './components/PersonForm';
 import Filter from './components/Filter';
-import Persons from './components/Persons';
 import Notification from './components/Notification';
+import PersonForm from './components/PersonForm';
+import Persons from './components/Persons';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -59,27 +59,27 @@ const App = () => {
       if (confirmUpdate) {
         personsService
           .update(alreadyExists.id, newPerson)
-          .then((returnedPerson) => {
+          .then((updatedPerson) => {
             setPersons((prevState) => {
               return prevState.map((person) => {
-                return person.id === alreadyExists.id ? returnedPerson : person;
+                return person.id === alreadyExists.id ? updatedPerson : person;
               });
             });
-            notify(`Updated ${returnedPerson.name}`, 'success');
+            notify(`Updated ${updatedPerson.name}`, 'success');
           })
-          .catch((err) => {
-            alert('There was a problem updating the phone number...');
+          .catch((error) => {
+            console.log(error.response.data.error);
           });
       }
     } else {
       personsService
         .create(newPerson)
-        .then((returnedPerson) => {
-          setPersons((prevState) => [...prevState, returnedPerson]);
-          notify(`Added ${returnedPerson.name}`, 'success');
+        .then((createdPerson) => {
+          setPersons((prevState) => [...prevState, createdPerson]);
+          notify(`Added ${createdPerson.name}`, 'success');
         })
-        .catch((err) => {
-          alert('There was a problem adding the new phone number...');
+        .catch((error) => {
+          console.log(error.response.data.error);
         });
 
       setNewPerson(newPersonInitialState);
@@ -98,7 +98,7 @@ const App = () => {
         .then(() => {
           notify(`Deleted ${personToDelete.name}.`, 'success');
         })
-        .catch((err) => {
+        .catch((error) => {
           notify(
             `${personToDelete.name} has already been removed from the server`,
             'error'

@@ -40,5 +40,6 @@
   "devDependencies": {
     "json-server": "^0.17.0",
     "kill-port": "^2.0.1"
-  }
+  },
+  "proxy": "http://localhost:3001"
 }
