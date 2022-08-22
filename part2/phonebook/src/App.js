@@ -98,7 +98,7 @@ const App = () => {
         .then(() => {
           notify(`Deleted ${personToDelete.name}.`, 'success');
         })
-        .catch((error) => {
+        .catch((_err) => {
           notify(
             `${personToDelete.name} has already been removed from the server`,
             'error'

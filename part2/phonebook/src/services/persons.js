@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = 'https://mcgee-phonebook-backend.herokuapp.com/api/persons';
+const baseURL = 'https://mcgee-phonebook-backend.herokuapp.com/api/persons';
 
 const getAll = () => {
   return axios.get(baseURL).then((res) => res.data);
