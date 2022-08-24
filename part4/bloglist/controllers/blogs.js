@@ -1,8 +1,8 @@
-const blogsRouter = require('express').Router();
-const Blog = require('../models/blog');
+const blogsRouter = require("express").Router();
+const Blog = require("../models/blog");
 
 // Create
-blogsRouter.post('/', (request, response, next) => {
+blogsRouter.post("/", (request, response, next) => {
   const { title, author, url, likes } = request.body;
 
   const blog = new Blog({
@@ -21,7 +21,7 @@ blogsRouter.post('/', (request, response, next) => {
 });
 
 // Read All
-blogsRouter.get('/', (_request, response, next) => {
+blogsRouter.get("/", (_request, response, next) => {
   Blog.find({})
     .then((blogs) => {
       response.json(blogs);
