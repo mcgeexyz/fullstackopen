@@ -63,3 +63,20 @@ describe("most blogs", () => {
     expect(result).toEqual({});
   });
 });
+
+describe("most likes", () => {
+  test("when list has many blogs, returns the author with the most likes", () => {
+    const result = listHelper.mostLikes(blogTestData);
+    expect(result).toEqual({ author: "Edsger W. Dijkstra", likes: 17 });
+  });
+
+  test("when list has one blog, returns the only author", () => {
+    const result = listHelper.mostLikes(blogListOne);
+    expect(result).toEqual({ author: "Edsger W. Dijkstra", likes: 5 });
+  });
+
+  test("when list is empty, returns an empty object", () => {
+    const result = listHelper.mostLikes(blogListEmpty);
+    expect(result).toEqual({});
+  });
+});
