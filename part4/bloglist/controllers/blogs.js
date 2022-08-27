@@ -1,11 +1,29 @@
 const blogsRouter = require("express").Router();
-const { application } = require("express");
-const blog = require("../models/blog");
+const config = require("../utils/config");
 const Blog = require("../models/blog");
+const User = require("../models/user");
+const jwt = require("jsonwebtoken");
+
+// Helpers
+const getTokenFrom = (request) => {
+  const authorization = request.get("authorization");
+  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+    return authorization.substring(7);
+  }
+  return null;
+};
 
 // Create
-blogsRouter.post("/", (request, response, next) => {
+blogsRouter.post("/", async (request, response) => {
   const { title, author, url, likes } = request.body;
+  const token = getTokenFrom(request);
+  const decodedToken = jwt.verify(token, config.SECRET);
+
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: "token missing or invalid" });
+  }
+
+  const user = await User.findById(decodedToken.id);
 
   if (!title) {
     return response.status(400).send({ error: "missing title" });
@@ -20,51 +38,45 @@ blogsRouter.post("/", (request, response, next) => {
     author,
     url,
     likes,
+    user: user._id,
   });
 
-  blog
-    .save()
-    .then((savedBlog) => {
-      response.status(201).json(savedBlog);
-    })
-    .catch((error) => next(error));
+  const savedBlog = await blog.save();
+  user.blogs = user.blogs.concat(savedBlog._id);
+  await user.save();
+
+  response.status(201).json(savedBlog);
 });
 
 // Read All
-blogsRouter.get("/", async (_request, response, next) => {
-  try {
-    const blogs = await Blog.find({});
-    response.json(blogs);
-  } catch (error) {
-    next(error);
-  }
+blogsRouter.get("/", async (_request, response) => {
+  const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
+  response.json(blogs);
 });
 
 // Update
 blogsRouter.put("/:id", async (request, response, next) => {
-  try {
-    const { id } = request.params;
-    const { title, author, url, likes } = request.body;
-    const blogObject = { title, author, url, likes };
+  const { id } = request.params;
+  const { title, author, url, likes } = request.body;
 
-    const updatedBlog = await Blog.findByIdAndUpdate(id, blogObject, {
-      new: true,
-    });
+  const updatedBlog = await Blog.findByIdAndUpdate(
+    id,
+    {
+      title,
+      author,
+      url,
+      likes,
+    },
+    { new: true }
+  );
 
-    response.json(updatedBlog);
-  } catch (error) {
-    next(error);
-  }
+  response.json(updatedBlog);
 });
 
 // Delete
 blogsRouter.delete("/:id", async (request, response, next) => {
-  try {
-    await blog.findByIdAndRemove(request.params.id);
-    response.status(204).end();
-  } catch (error) {
-    next(error);
-  }
+  await Blog.findByIdAndRemove(request.params.id);
+  response.status(204).end();
 });
 
 module.exports = blogsRouter;
