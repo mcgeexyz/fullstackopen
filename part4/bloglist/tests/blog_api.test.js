@@ -123,8 +123,6 @@ describe("updating a note", () => {
 
     const allBlogs = await api.get("/api/blogs");
 
-    console.log(allBlogs);
-
     // expect(blogsAtEnd[0].likes).toBe(100);
   });
 });
