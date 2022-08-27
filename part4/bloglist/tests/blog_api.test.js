@@ -58,6 +58,29 @@ test("a valid blog can be added", async () => {
   expect(blogTitles).toContain("Monkey Coding");
 });
 
+test("the blogs likes property will default to 0", async () => {
+  const newBlog = {
+    title: "Monkey Coding",
+    author: "Mike Ling",
+    url: "https://monkeycoding.com/",
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  // Total number of blogs increased by one
+  const blogsAtEnd = await Blog.find({});
+  expect(blogsAtEnd).toHaveLength(blogData.length + 1);
+
+  console.log(blogsAtEnd[blogsAtEnd.length - 1]);
+
+  // The title of the new blog is in the database
+  expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toBeDefined();
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
