@@ -10,10 +10,7 @@ jest.setTimeout(100000);
 
 beforeEach(async () => {
   await Blog.deleteMany({});
-
-  const blogObjects = blogData.map((blog) => new Blog(blog));
-  const promiseArray = blogObjects.map((blog) => blog.save());
-  await Promise.all(promiseArray);
+  await Blog.insertMany(blogData);
 });
 
 test("all blogs are returned", async () => {
@@ -111,6 +108,24 @@ describe("deletion of a note", () => {
     const titles = blogsAtEnd.map((r) => r.title);
 
     expect(titles).not.toContain(blogToDelete.title);
+  });
+});
+
+describe("updating a note", () => {
+  test("succeeds with status code 200 when updating likes of valid id", async () => {
+    const blogToUpdateId = blogData[0]._id;
+
+    // const { title, author, url } = blogToUpdate;
+
+    const returnedBlog = await api
+      .put(`/api/blogs/${blogToUpdateId}`, { likes: 100 })
+      .expect(200);
+
+    const allBlogs = await api.get("/api/blogs");
+
+    console.log(allBlogs);
+
+    // expect(blogsAtEnd[0].likes).toBe(100);
   });
 });
 
