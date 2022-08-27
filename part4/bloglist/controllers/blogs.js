@@ -1,4 +1,6 @@
 const blogsRouter = require("express").Router();
+const { application } = require("express");
+const blog = require("../models/blog");
 const Blog = require("../models/blog");
 
 // Create
@@ -33,6 +35,16 @@ blogsRouter.get("/", async (_request, response, next) => {
   try {
     const blogs = await Blog.find({});
     response.json(blogs);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Delete
+blogsRouter.delete("/:id", async (request, response, next) => {
+  try {
+    await blog.findByIdAndRemove(request.params.id);
+    response.status(204).end();
   } catch (error) {
     next(error);
   }

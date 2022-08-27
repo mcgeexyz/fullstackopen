@@ -97,6 +97,23 @@ test("creating a new blog without a url will return status 400 bad request", asy
   await api.post("/api/blogs").send(newBlog).expect(400);
 });
 
+describe("deletion of a note", () => {
+  test("succeeds with status code 204 if id is valid", async () => {
+    const allBlogs = await Blog.find({});
+    const blogToDelete = allBlogs[0];
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+    const blogsAtEnd = await Blog.find({});
+
+    expect(blogsAtEnd).toHaveLength(allBlogs.length - 1);
+
+    const titles = blogsAtEnd.map((r) => r.title);
+
+    expect(titles).not.toContain(blogToDelete.title);
+  });
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
