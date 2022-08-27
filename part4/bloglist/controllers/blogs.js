@@ -5,6 +5,14 @@ const Blog = require("../models/blog");
 blogsRouter.post("/", (request, response, next) => {
   const { title, author, url, likes } = request.body;
 
+  if (!title) {
+    return response.status(400).send({ error: "missing title" });
+  }
+
+  if (!url) {
+    return response.status(400).send({ error: "missing url" });
+  }
+
   const blog = new Blog({
     title,
     author,

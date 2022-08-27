@@ -75,10 +75,26 @@ test("the blogs likes property will default to 0", async () => {
   const blogsAtEnd = await Blog.find({});
   expect(blogsAtEnd).toHaveLength(blogData.length + 1);
 
-  console.log(blogsAtEnd[blogsAtEnd.length - 1]);
-
   // The title of the new blog is in the database
   expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toBeDefined();
+});
+
+test("creating a new blog without a title will return status 400 bad request", async () => {
+  const newBlog = {
+    author: "Mike Ling",
+    url: "https://monkeycoding.com/",
+  };
+
+  await api.post("/api/blogs").send(newBlog).expect(400);
+});
+
+test("creating a new blog without a url will return status 400 bad request", async () => {
+  const newBlog = {
+    title: "Monkey Coding",
+    author: "Mike Ling",
+  };
+
+  await api.post("/api/blogs").send(newBlog).expect(400);
 });
 
 afterAll(() => {
