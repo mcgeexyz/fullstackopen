@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = 'https://mcgee-notes-backend.herokuapp.com/api/notes';
+const baseUrl = '/api/notes';
 
 const getAll = () => {
   return axios.get(baseUrl).then((res) => res.data);
